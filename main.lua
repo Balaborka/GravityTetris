@@ -8,5 +8,12 @@ local gradient = {
 background:setFillColor(gradient)
 background.fill.rotation = 345
 
-local gameArea = display.newRect(display.contentCenterX, display.contentCenterY - 150, 900, 1500)
+local gameArea = display.newRoundedRect(
+    display.contentCenterX,
+    display.contentCenterY - (display.actualContentHeight / 18),
+    900,
+    1500,
+    20
+)
+
 gameArea:setFillColor(0, 0, 0, 1)
