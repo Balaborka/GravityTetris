@@ -1,4 +1,7 @@
-local background = display.newRect(display.contentCenterX, display.contentCenterY, display.actualContentWidth, display.actualContentHeight)
+display.anchorX = 0
+display.anchorY = 0
+
+local background = display.newRect(display.screenOriginX, 0, display.actualContentWidth, display.actualContentHeight)
 local gradient = {
     type="gradient",
     color1={ 0.486, 0.788, 0.956, 1 }, 
@@ -7,13 +10,43 @@ local gradient = {
 }
 background:setFillColor(gradient)
 background.fill.rotation = 345
+background.anchorX = 0
+background.anchorY = 0
 
 local gameArea = display.newRoundedRect(
-    display.contentCenterX,
-    display.contentCenterY - (display.actualContentHeight / 18),
-    900,
-    1500,
+    0, --display.screenOriginX + display.actualContentWidth / 12, --This value is calculated later
+    display.actualContentHeight / 8,
+    0, --background.width - background.width / 6, --This value is calculated later
+    background.height - background.height / 2.5,
     20
 )
-
+gameArea.anchorX = 0
+gameArea.anchorY = 0
+local horisontalLinesCount = 10
+local varticalLinesCount = 6
+gameArea.width = gameArea.height * varticalLinesCount / horisontalLinesCount
+gameArea.x = display.screenOriginX + (background.width - gameArea.width) / 2
 gameArea:setFillColor(0, 0, 0, 1)
+
+local lineThickness = 5
+local hx = gameArea.x
+local hy = gameArea.y + gameArea.height / horisontalLinesCount
+for i = 1, horisontalLinesCount - 1 do
+    local horisontalGridLine = display.newRect(hx, hy, gameArea.width, lineThickness)
+    horisontalGridLine:setFillColor(0.176, 0.886, 0.290, 0.3)
+    hy = hy + gameArea.height / horisontalLinesCount
+    horisontalGridLine.anchorX = 0
+    horisontalGridLine.anchorY = 0
+end
+
+local vx = gameArea.x + gameArea.width / varticalLinesCount
+local vy = gameArea.y
+for i=1, varticalLinesCount - 1 do
+  local verticalGridLine = display.newRect(vx, vy, lineThickness, gameArea.height)
+  verticalGridLine:setFillColor(0.176, 0.886, 0.290, 0.3)
+  vx = vx + gameArea.width / varticalLinesCount
+  verticalGridLine.anchorX = 0
+  verticalGridLine.anchorY = 0
+end
+
+--local text1 = display.newText( (gameArea.x) / 2, 160, 210, font, 50)
