@@ -1,11 +1,12 @@
 display.anchorX = 0
 display.anchorY = 0
+roundValue = 20
 
 local background = display.newRect(display.screenOriginX, 0, display.actualContentWidth, display.actualContentHeight)
 local gradient = {
     type="gradient",
-    color1={ 0.486, 0.788, 0.956, 1 }, 
-    color2={ 0.176, 0.886, 0.290, 1 }, 
+    color1={ 0.486, 0.788, 0.956, 1 },
+    color2={ 0.176, 0.886, 0.290, 1 },
     direction="down"
 }
 background:setFillColor(gradient)
@@ -18,7 +19,7 @@ local gameArea = display.newRoundedRect(
     display.actualContentHeight / 8,
     0, --background.width - background.width / 6, --This value is calculated later
     background.height - background.height / 2.5,
-    20
+    roundValue
 )
 gameArea.anchorX = 0
 gameArea.anchorY = 0
@@ -26,9 +27,9 @@ local horisontalLinesCount = 10
 local varticalLinesCount = 6
 gameArea.width = gameArea.height * varticalLinesCount / horisontalLinesCount
 gameArea.x = display.screenOriginX + (background.width - gameArea.width) / 2
-gameArea:setFillColor(0, 0, 0, 1)
+gameArea:setFillColor(0, 0, 0, 0.85)
 
-local lineThickness = 5
+local lineThickness = 4
 local hx = gameArea.x
 local hy = gameArea.y + gameArea.height / horisontalLinesCount
 for i = 1, horisontalLinesCount - 1 do
@@ -49,4 +50,52 @@ for i=1, varticalLinesCount - 1 do
   verticalGridLine.anchorY = 0
 end
 
---local text1 = display.newText( (gameArea.x) / 2, 160, 210, font, 50)
+local whatIsTheNextBrickArea = display.newRoundedRect(
+    display.contentCenterX,
+    background.height - (background.height - gameArea.height) / 2.5,
+    gameArea.width / varticalLinesCount * 2 / 1.2,
+    gameArea.width / varticalLinesCount * 2 / 1.2,
+    roundValue
+)
+whatIsTheNextBrickArea:setFillColor(0, 0, 0, 0.85)
+
+
+local levelArea = display.newRoundedRect(
+    gameArea.x,
+    whatIsTheNextBrickArea.y - whatIsTheNextBrickArea.height / 2,
+    gameArea.width / varticalLinesCount * 2 / 1.2,
+    gameArea.width / varticalLinesCount / 1.6,
+    roundValue
+)
+levelArea:setFillColor(0, 0, 0, 0.85)
+levelArea.anchorX = 0
+levelArea.anchorY = 0
+
+local scoreArea = display.newRoundedRect(
+    levelArea.x,
+    levelArea.y + levelArea.height + levelArea.height / 4,
+    levelArea.width,
+    levelArea.height,
+    roundValue
+)
+scoreArea:setFillColor(0, 0, 0, 0.8)
+scoreArea.anchorX = 0
+scoreArea.anchorY = 0
+
+local pauseButton = display.newImageRect("pause-button.png", levelArea.height, levelArea.height);
+pauseButton.x = gameArea.x
+pauseButton.y = gameArea.y / 2
+pauseButton.anchorX = 0
+pauseButton.anchorY = 0
+
+local gravityTetrisLabel = display.newEmbossedText(
+    "Gravity \n\r Tetris", 
+    whatIsTheNextBrickArea.x + (whatIsTheNextBrickArea.x - levelArea.x / 2),
+    whatIsTheNextBrickArea.y, 
+    "Century Gothic Bold", 
+    85
+)
+local color = { highlight = { r=0, g=0, b=0 } }
+gravityTetrisLabel:setEmbossColor(color)
+
+--local text1 = display.newText(pauseButton.height, 160, 240, font, 50)
