@@ -88,6 +88,32 @@ pauseButton.y = gameArea.y / 2
 pauseButton.anchorX = 0
 pauseButton.anchorY = 0
 
+local pauseButtonPressed = false
+local function touchOnPause (event)
+    if(event.phase == "began") then
+      pauseButton.height = pauseButton.height / 1.1
+      pauseButton.width = pauseButton.width / 1.1
+      pauseButtonPressed = true
+    end
+    if(event.phase == "ended" or event.phase == "cancelled") then
+        if (pauseButtonPressed) then
+            pauseButton.height = pauseButton.height * 1.1
+            pauseButton.width = pauseButton.width * 1.1
+            pauseButtonPressed = false
+        end
+    end
+    if(event.phase == "moved") then
+        if (pauseButtonPressed) then
+            pauseButton.height = pauseButton.height * 1.1
+            pauseButton.width = pauseButton.width * 1.1
+        pauseButtonPressed = false
+        end
+    end
+end
+
+pauseButton:addEventListener("touch", touchOnPause)
+
+
 local gravityTetrisLabel = display.newEmbossedText(
     "Gravity \n\r Tetris", 
     whatIsTheNextBrickArea.x + (whatIsTheNextBrickArea.x - levelArea.x / 2),
