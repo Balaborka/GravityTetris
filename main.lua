@@ -88,27 +88,41 @@ pauseButton.y = gameArea.y / 2
 pauseButton.anchorX = 0
 pauseButton.anchorY = 0
 
-local pauseButtonPressed = false
 local function touchOnPause (event)
-    if(event.phase == "began") then
-      pauseButton.height = pauseButton.height / 1.1
-      pauseButton.width = pauseButton.width / 1.1
-      pauseButtonPressed = true
-    end
-    if(event.phase == "ended" or event.phase == "cancelled") then
-        if (pauseButtonPressed) then
-            pauseButton.height = pauseButton.height * 1.1
-            pauseButton.width = pauseButton.width * 1.1
-            pauseButtonPressed = false
-        end
-    end
-    if(event.phase == "moved") then
-        if (pauseButtonPressed) then
-            pauseButton.height = pauseButton.height * 1.1
-            pauseButton.width = pauseButton.width * 1.1
-        pauseButtonPressed = false
-        end
-    end
+	local object = event.target
+	local value = 0.93
+
+	if not object.isFocus then
+		if event.phase == "began" or event.phase == "moved" then
+			object.isFocus = true
+			object.xScale = value
+			object.yScale = value
+			object.offsetX = (object.width - object.width*value)/2
+			object.offsetY = (object.height - object.height*value)/2
+			display.getCurrentStage():setFocus(object)
+		end
+	end
+
+	if object.isFocus then
+		if event.phase == "moved" then
+				if event.x < object.contentBounds.xMin - object.offsetX or 
+                event.x > object.contentBounds.xMax + object.offsetX or
+				event.y < object.contentBounds.yMin - object.offsetY or 
+                event.y > object.contentBounds.yMax + object.offsetY then
+						object.isFocus = false
+						object.xScale = 1
+						object.yScale = 1
+						display.getCurrentStage():setFocus(nil)
+				end
+		end
+
+		if event.phase == "ended" then
+			object.isFocus = false
+			object.xScale = 1
+			object.yScale = 1
+			display.getCurrentStage():setFocus(nil)
+		end
+	end
 end
 
 pauseButton:addEventListener("touch", touchOnPause)
