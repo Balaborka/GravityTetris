@@ -82,14 +82,18 @@ scoreArea:setFillColor(0, 0, 0, 0.8)
 scoreArea.anchorX = 0
 scoreArea.anchorY = 0
 
-local pauseButton = display.newImageRect("pause-button.png", levelArea.height, levelArea.height);
-pauseButton.x = gameArea.x
-pauseButton.y = gameArea.y / 2
-pauseButton.anchorX = 0
-pauseButton.anchorY = 0
+local gravityTetrisLabel = display.newEmbossedText(
+    "Gravity \n\r Tetris", 
+    whatIsTheNextBrickArea.x + (whatIsTheNextBrickArea.x - levelArea.x / 2),
+    whatIsTheNextBrickArea.y, 
+    "Century Gothic Bold", 
+    85
+)
+local color = { highlight = { r=0, g=0, b=0 } }
+gravityTetrisLabel:setEmbossColor(color)
 
-local function touchOnPause (event)
-	local object = event.target
+local function TouchOnObject (event)
+    local object = event.target
 	local value = 0.93
 
 	if not object.isFocus then
@@ -125,17 +129,33 @@ local function touchOnPause (event)
 	end
 end
 
-pauseButton:addEventListener("touch", touchOnPause)
+local prePauseScreen = display.newImageRect("pre-pause-screen.png", whatIsTheNextBrickArea.width * 1.5, whatIsTheNextBrickArea.height * 1.5);
+prePauseScreen.x = gameArea.x + gameArea.width / 2
+prePauseScreen.y = gameArea.y + gameArea.height / 2
+prePauseScreen.alpha = 0.8
+prePauseScreen.isVisible = false
+function ShowHidePause(isPaused)
+    prePauseScreen.isVisible = isPaused
+end
+local function TouchOnPrePauseScreen (event)
+	TouchOnObject(event)
+    if (event.phase == "ended") then
+        ShowHidePause(false)
+    end
+end
+prePauseScreen:addEventListener("touch", TouchOnPrePauseScreen)
 
-
-local gravityTetrisLabel = display.newEmbossedText(
-    "Gravity \n\r Tetris", 
-    whatIsTheNextBrickArea.x + (whatIsTheNextBrickArea.x - levelArea.x / 2),
-    whatIsTheNextBrickArea.y, 
-    "Century Gothic Bold", 
-    85
-)
-local color = { highlight = { r=0, g=0, b=0 } }
-gravityTetrisLabel:setEmbossColor(color)
+local pauseButton = display.newImageRect("pause-button.png", levelArea.height, levelArea.height);
+pauseButton.x = gameArea.x
+pauseButton.y = gameArea.y / 2
+pauseButton.anchorX = 0
+pauseButton.anchorY = 0
+local function TouchOnPause (event)
+	TouchOnObject(event)
+    if (event.phase == "ended") then
+        ShowHidePause(not prePauseScreen.isVisible)
+    end
+end
+pauseButton:addEventListener("touch", TouchOnPause)
 
 --local text1 = display.newText(pauseButton.height, 160, 240, font, 50)
