@@ -59,7 +59,6 @@ local whatIsTheNextBrickArea = display.newRoundedRect(
 )
 whatIsTheNextBrickArea:setFillColor(0, 0, 0, 0.85)
 
-
 local levelArea = display.newRoundedRect(
     gameArea.x,
     whatIsTheNextBrickArea.y - whatIsTheNextBrickArea.height / 2,
@@ -157,5 +156,24 @@ local function TouchOnPause (event)
     end
 end
 pauseButton:addEventListener("touch", TouchOnPause)
+
+-- Below is a simple brick creating demonstration. You can use this code to create a logic.
+local itemsEnum = {
+    Triangle=1,
+    Cube=2,
+    Line=3,
+}
+
+local brick = display.newRoundedRect(gameArea.x + gameArea.width / 2 + 12, gameArea.y + 12, (gameArea.width / varticalLinesCount) / 1.2, (gameArea.width / varticalLinesCount) / 1.2, roundValue)
+local gradient = {
+    type="gradient",
+    color1={ 169 / 255, 254 / 255, 178 / 255, 1 },
+    color2={ 91 / 255, 206 / 255, 103 / 255, 1 },
+    direction="down"
+}
+brick:setFillColor(gradient)
+brick.fill.rotation = 30
+brick.anchorX = 0
+brick.anchorY = 0
 
 --local text1 = display.newText(pauseButton.height, 160, 240, font, 50)
