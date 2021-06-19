@@ -171,22 +171,12 @@ local BlcokFormEnum = {
     Line = 3,
 }
 
---local BlcokFormEnum = {}
---BlcokFormEnum.Triangle = 1
---BlcokFormEnum.Cube = 2
---BlcokFormEnum.Line = 3
---BlcokFormEnum.ALL = {
-    --BlcokFormEnum.Triangle,
-    --BlcokFormEnum.Cube,
-  --  BlcokFormEnum.Line
---}
---return Color
-
 local Brick = {}
 local brickWidth = (gameArea.width / varticalLinesCount) / 1.2
 local brickHeight = brickWidth
 function Brick:new(x, y, brickColor)
   local brick = display.newRoundedRect(x, y, brickWidth, brickHeight, roundValue)
+  local isRemovingBrick = false
   local gradient = {}
   if (brickColor == BrickColorEnum.Green) then      
   gradient = {
@@ -231,36 +221,78 @@ function Brick:new(x, y, brickColor)
   return brick
 end
 
+local function GetColorEnum(blcokForm)
+  local colors = {}
+  if (blcokForm == BlcokFormEnum.line) then
+    local color1 = math.random(1, 5)
+    local color2 = math.random(1, 5)
+    local color3 = math.random(1, 5)
+    if (color1 == color2) then
+      local rans = {1,2,3,4,5}
+      table.remove(rans, color1)
+      color3 = rans[math.random(#rans)]
+    end
+    table.insert(colors, color1)
+    table.insert(colors, color2)
+    table.insert(colors, color3)
+  else
+    local color1 = math.random(1, 5)
+    local color2 = math.random(1, 5)
+    local color3 = math.random(1, 5)
+    local color4 = math.random(1, 5)
+    if (color1 == color2) then
+      local rans = {1,2,3,4,5}
+      table.remove(rans, color1)
+      color3 = rans[math.random(#rans)]
+      color4 = rans[math.random(#rans)]
+    end
+    if (color1 == color3) then
+      local rans = {1,2,3,4,5}
+      table.remove(rans, color1)
+      color4 = rans[math.random(#rans)]
+    end
+      table.insert(colors, color1)
+    table.insert(colors, color2)
+    table.insert(colors, color3)
+    table.insert(colors, color4)
+  end
+  return colors
+end
+
 local Block = {}
 function Block:new(blcokForm)
-
   local block = display.newGroup()
-  if (blcokForm == BlcokFormEnum.Cube or blcokForm == BlcokFormEnum.Triangle) then
-    local x1_3 = gameArea.x + gameArea.width / 3 + 13
-    local x2_4 = gameArea.x + gameArea.width / 2 + 13
-    local y1_2 = gameArea.y + 13
-    local y3_4 = y1_2 + (x2_4 - x1_3)
-    local brick1 = Brick:new(x1_3, y1_2, BrickColorEnum.Yellow)
-    local brick2 = Brick:new(x2_4, y1_2, BrickColorEnum.Red)
-    local brick3 = Brick:new(x1_3, y3_4, BrickColorEnum.Blue)
-    block:insert( brick1 )
-    block:insert( brick2 )
-    block:insert( brick3 )
-    if(blcokForm == BlcokFormEnum.Cube) then
-      local brick4 = Brick:new(x2_4, y3_4, BrickColorEnum.Purple)
-      block:insert( brick4 )
-    end
-  elseif (blcokForm == BlcokFormEnum.Line) then
+  local isActiveBlock = true
+  local colors = GetColorEnum(blcokForm)
+  if (blcokForm == BlcokFormEnum.Line) then
     local x1_2_3 = gameArea.x + gameArea.width / 3 + 13
     local y1 = gameArea.y + 13
     local y2 = y1 + ((gameArea.x + gameArea.width / 2 + 13) - (gameArea.x + gameArea.width / 3 + 13))
     local y3 = y2 + (y2 - y1)
-    local brick1 = Brick:new(x1_2_3, y1, BrickColorEnum.Green)
-    local brick2 = Brick:new(x1_2_3, y2, BrickColorEnum.Green)
-    local brick3 = Brick:new(x1_2_3, y3, BrickColorEnum.Green)
+    local brick1 = Brick:new(x1_2_3, y1, colors[1])
+    local brick2 = Brick:new(x1_2_3, y2, colors[2])
+    local brick3 = Brick:new(x1_2_3, y3, colors[3])
     block:insert( brick1 )
     block:insert( brick2 )
     block:insert( brick3 )
+  else
+    local x1_3 = gameArea.x + gameArea.width / 3 + 13
+    local x2_4 = gameArea.x + gameArea.width / 2 + 13
+    local y1_2 = gameArea.y + 13
+    local y3_4 = y1_2 + (x2_4 - x1_3)
+
+    local brick1 = Brick:new(x1_3, y1_2, colors[1])
+    local brick2 = Brick:new(x2_4, y1_2, colors[2])
+    local brick3 = Brick:new(x1_3, y3_4, colors[3])
+    local brick4 = Brick:new(x2_4, y3_4, colors[4])
+
+    block:insert( brick1 )
+    block:insert( brick2 )
+    block:insert( brick3 )
+    block:insert( brick4 )
+    if(blcokForm == BlcokFormEnum.Triangle) then
+      block:remove(math.random(1, 4))
+    end
   end
   return block
 end
