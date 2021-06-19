@@ -157,23 +157,114 @@ local function TouchOnPause (event)
 end
 pauseButton:addEventListener("touch", TouchOnPause)
 
--- Below is a simple brick creating demonstration. You can use this code to create a logic.
-local itemsEnum = {
-    Triangle=1,
-    Cube=2,
-    Line=3,
+-- Bricks and Blocks.
+local BrickColorEnum = {
+    Green = 1,
+    Yellow = 2,
+    Red = 3,
+    Blue = 4,
+    Purple = 5,
+}
+local BlcokFormEnum = {
+    Triangle = 1,
+    Cube = 2,
+    Line = 3,
 }
 
-local brick = display.newRoundedRect(gameArea.x + gameArea.width / 2 + 12, gameArea.y + 12, (gameArea.width / varticalLinesCount) / 1.2, (gameArea.width / varticalLinesCount) / 1.2, roundValue)
-local gradient = {
+--local BlcokFormEnum = {}
+--BlcokFormEnum.Triangle = 1
+--BlcokFormEnum.Cube = 2
+--BlcokFormEnum.Line = 3
+--BlcokFormEnum.ALL = {
+    --BlcokFormEnum.Triangle,
+    --BlcokFormEnum.Cube,
+  --  BlcokFormEnum.Line
+--}
+--return Color
+
+local Brick = {}
+local brickWidth = (gameArea.width / varticalLinesCount) / 1.2
+local brickHeight = brickWidth
+function Brick:new(x, y, brickColor)
+  local brick = display.newRoundedRect(x, y, brickWidth, brickHeight, roundValue)
+  local gradient = {}
+  if (brickColor == BrickColorEnum.Green) then      
+  gradient = {
     type="gradient",
     color1={ 169 / 255, 254 / 255, 178 / 255, 1 },
     color2={ 91 / 255, 206 / 255, 103 / 255, 1 },
     direction="down"
-}
-brick:setFillColor(gradient)
-brick.fill.rotation = 30
-brick.anchorX = 0
-brick.anchorY = 0
+  }
+  elseif (brickColor == BrickColorEnum.Yellow) then
+    gradient = {
+        type="gradient",
+        color1={ 255 / 255, 245 / 255, 155 / 255, 1 },
+        color2={ 249 / 255, 194 / 255, 0 / 255, 1 },
+        direction="down"
+      }
+  elseif (brickColor == BrickColorEnum.Red) then
+    gradient = {
+        type="gradient",
+        color1={ 234 / 255, 168 / 255, 147 / 255, 1 },
+        color2={ 249 / 255, 15 / 255, 0 / 255, 1 },
+        direction="down"
+      }
+  elseif (brickColor == BrickColorEnum.Blue) then
+    gradient = {
+        type="gradient",
+        color1={ 147 / 255, 187 / 255, 234 / 255, 1 },
+        color2={ 0 / 255, 85 / 255, 249 / 255, 1 },
+        direction="down"
+      }
+  elseif (brickColor == BrickColorEnum.Purple) then
+    gradient = {
+        type="gradient",
+        color1={ 232 / 255, 147 / 255, 234 / 255, 1 },
+        color2={ 206 / 255, 4 / 255, 210 / 255, 1 },
+        direction="down"
+      }
+  end
+  brick:setFillColor(gradient)
+  brick.fill.rotation = 30
+  brick.anchorX = 0
+  brick.anchorY = 0
+  return brick
+end
 
---local text1 = display.newText(pauseButton.height, 160, 240, font, 50)
+local Block = {}
+function Block:new(blcokForm)
+
+  local block = display.newGroup()
+  if (blcokForm == BlcokFormEnum.Cube or blcokForm == BlcokFormEnum.Triangle) then
+    local x1_3 = gameArea.x + gameArea.width / 3 + 13
+    local x2_4 = gameArea.x + gameArea.width / 2 + 13
+    local y1_2 = gameArea.y + 13
+    local y3_4 = y1_2 + (x2_4 - x1_3)
+    local brick1 = Brick:new(x1_3, y1_2, BrickColorEnum.Yellow)
+    local brick2 = Brick:new(x2_4, y1_2, BrickColorEnum.Red)
+    local brick3 = Brick:new(x1_3, y3_4, BrickColorEnum.Blue)
+    block:insert( brick1 )
+    block:insert( brick2 )
+    block:insert( brick3 )
+    if(blcokForm == BlcokFormEnum.Cube) then
+      local brick4 = Brick:new(x2_4, y3_4, BrickColorEnum.Purple)
+      block:insert( brick4 )
+    end
+  elseif (blcokForm == BlcokFormEnum.Line) then
+    local x1_2_3 = gameArea.x + gameArea.width / 3 + 13
+    local y1 = gameArea.y + 13
+    local y2 = y1 + ((gameArea.x + gameArea.width / 2 + 13) - (gameArea.x + gameArea.width / 3 + 13))
+    local y3 = y2 + (y2 - y1)
+    local brick1 = Brick:new(x1_2_3, y1, BrickColorEnum.Green)
+    local brick2 = Brick:new(x1_2_3, y2, BrickColorEnum.Green)
+    local brick3 = Brick:new(x1_2_3, y3, BrickColorEnum.Green)
+    block:insert( brick1 )
+    block:insert( brick2 )
+    block:insert( brick3 )
+  end
+  return block
+end
+
+local block = Block:new(math.random(1, 3))
+
+--local text1 = display.newText(blcokForm, 160, 240, font, 50)
