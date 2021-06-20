@@ -29,6 +29,28 @@ gameArea.width = gameArea.height * varticalLinesCount / horisontalLinesCount
 gameArea.x = display.screenOriginX + (background.width - gameArea.width) / 2
 gameArea:setFillColor(0, 0, 0, 0.85)
 
+local gameAreaTopBorder = display.newRect(gameArea.x, gameArea.y, gameArea.width, 0)
+gameAreaTopBorder.anchorX = 0
+gameAreaTopBorder.anchorY = 0
+local gameAreaRightBorder = display.newRect(gameArea.x + gameArea.width, gameArea.y, 0, gameArea.height)
+gameAreaRightBorder.anchorX = 0
+gameAreaRightBorder.anchorY = 0
+local gameAreaBottomBorder = display.newRect(gameArea.x, gameArea.y + gameArea.height, gameArea.width, 0)
+gameAreaBottomBorder.anchorX = 0
+gameAreaBottomBorder.anchorY = 0
+local gameAreaLeftBorder = display.newRect(gameArea.x, gameArea.y, 0, gameArea.height)
+gameAreaLeftBorder.anchorX = 0
+gameAreaLeftBorder.anchorY = 0
+
+local physics = require("physics")
+physics.setDrawMode( "hybrid" )
+physics.start()
+
+--physics.addBody(gameAreaTopBorder, "static", { density = 3.0, friction = 0.5, bounce = 0.2 })
+physics.addBody(gameAreaRightBorder, "static", { density = 3.0, friction = 0.0, bounce = 0.0 })
+physics.addBody(gameAreaBottomBorder, "static", { density = 3.0, friction = 0.0, bounce = 0.0 })
+physics.addBody(gameAreaRightBorder, "static", { density = 3.0, friction = 0.0, bounce = 0.0 })
+
 local lineThickness = 4
 local hx = gameArea.x
 local hy = gameArea.y + gameArea.height / horisontalLinesCount
@@ -158,6 +180,7 @@ end
 pauseButton:addEventListener("touch", TouchOnPause)
 
 -- Bricks and Blocks.
+
 local BrickColorEnum = {
     Green = 1,
     Yellow = 2,
@@ -221,7 +244,7 @@ function Brick:new(x, y, brickColor)
   return brick
 end
 
-local function GetColorEnum(blcokForm)
+local function GetColorCollection(blcokForm)
   local colors = {}
   if (blcokForm == BlcokFormEnum.line) then
     local color1 = math.random(1, 5)
@@ -263,7 +286,7 @@ local Block = {}
 function Block:new(blcokForm)
   local block = display.newGroup()
   local isActiveBlock = true
-  local colors = GetColorEnum(blcokForm)
+  local colors = GetColorCollection(blcokForm)
   if (blcokForm == BlcokFormEnum.Line) then
     local x1_2_3 = gameArea.x + gameArea.width / 3 + 13
     local y1 = gameArea.y + 13
@@ -294,9 +317,13 @@ function Block:new(blcokForm)
       block:remove(math.random(1, 4))
     end
   end
+  physics.addBody(block, { density = 0.3, friction = 1.0, bounce = 0.3 })
   return block
 end
 
 local block = Block:new(math.random(1, 3))
+local b = Brick:new(gameArea.x + 13, gameArea.y + 13, 1)
+physics.addBody(b, { density = 0.3, friction = 1.0, bounce = 0.3 })
+
 
 --local text1 = display.newText(blcokForm, 160, 240, font, 50)
