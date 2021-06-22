@@ -49,7 +49,7 @@ physics.start()
 --physics.addBody(gameAreaTopBorder, "static", { density = 3.0, friction = 0.5, bounce = 0.2 })
 physics.addBody(gameAreaRightBorder, "static", { density = 3.0, friction = 0.0, bounce = 0.0 })
 physics.addBody(gameAreaBottomBorder, "static", { density = 3.0, friction = 0.0, bounce = 0.0 })
-physics.addBody(gameAreaRightBorder, "static", { density = 3.0, friction = 0.0, bounce = 0.0 })
+physics.addBody(gameAreaLeftBorder, "static", { density = 3.0, friction = 0.0, bounce = 0.0 })
 
 local lineThickness = 4
 local hx = gameArea.x
@@ -150,36 +150,7 @@ local function TouchOnObject (event)
 	end
 end
 
-local prePauseScreen = display.newImageRect("pre-pause-screen.png", whatIsTheNextBrickArea.width * 1.5, whatIsTheNextBrickArea.height * 1.5);
-prePauseScreen.x = gameArea.x + gameArea.width / 2
-prePauseScreen.y = gameArea.y + gameArea.height / 2
-prePauseScreen.alpha = 0.8
-prePauseScreen.isVisible = false
-function ShowHidePause(isPaused)
-    prePauseScreen.isVisible = isPaused
-end
-local function TouchOnPrePauseScreen (event)
-	TouchOnObject(event)
-    if (event.phase == "ended") then
-        ShowHidePause(false)
-    end
-end
-prePauseScreen:addEventListener("touch", TouchOnPrePauseScreen)
-
-local pauseButton = display.newImageRect("pause-button.png", levelArea.height, levelArea.height);
-pauseButton.x = gameArea.x
-pauseButton.y = gameArea.y / 2
-pauseButton.anchorX = 0
-pauseButton.anchorY = 0
-local function TouchOnPause (event)
-	TouchOnObject(event)
-    if (event.phase == "ended") then
-        ShowHidePause(not prePauseScreen.isVisible)
-    end
-end
-pauseButton:addEventListener("touch", TouchOnPause)
-
--- Bricks and Blocks.
+-- Bricks Blocks region.
 
 local BrickColorEnum = {
     Green = 1,
@@ -325,5 +296,42 @@ local block = Block:new(math.random(1, 3))
 local b = Brick:new(gameArea.x + 13, gameArea.y + 13, 1)
 physics.addBody(b, { density = 0.3, friction = 1.0, bounce = 0.3 })
 
+-- Bricks Blocks region end
+
+
+-- Now I added pause screen after adding other controls in order to draw this screen above other controls. However, we can use the obj:toFront() method to achieve the same 
+local prePauseScreen = display.newImageRect("pre-pause-screen.png", whatIsTheNextBrickArea.width * 1.5, whatIsTheNextBrickArea.height * 1.5);
+prePauseScreen.x = gameArea.x + gameArea.width / 2
+prePauseScreen.y = gameArea.y + gameArea.height / 2
+prePauseScreen.alpha = 0.8
+prePauseScreen.isVisible = false
+function ShowHidePause(isPaused)
+    prePauseScreen.isVisible = isPaused
+    if (isPaused) then
+      physics.pause()
+    else
+      physics.start()
+    end
+end
+local function TouchOnPrePauseScreen (event)
+	TouchOnObject(event)
+    if (event.phase == "ended") then
+        ShowHidePause(false)
+    end
+end
+prePauseScreen:addEventListener("touch", TouchOnPrePauseScreen)
+
+local pauseButton = display.newImageRect("pause-button.png", levelArea.height, levelArea.height);
+pauseButton.x = gameArea.x
+pauseButton.y = gameArea.y / 2
+pauseButton.anchorX = 0
+pauseButton.anchorY = 0
+local function TouchOnPause (event)
+	TouchOnObject(event)
+    if (event.phase == "ended") then
+        ShowHidePause(not prePauseScreen.isVisible)
+    end
+end
+pauseButton:addEventListener("touch", TouchOnPause)
 
 --local text1 = display.newText(blcokForm, 160, 240, font, 50)
